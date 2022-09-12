@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react'
 import {FrontDoor,wall,floor} from "../Game/objects";
-import {printMap} from "../Game/actions"
+import {printMap,move} from "../Game/actions"
 import {player1} from "../Game/player";
 
 function usePrevious(value){
@@ -14,8 +14,7 @@ function usePrevious(value){
 function NormalMode(){
     const [positionX,setPositionX] = useState(5)
     const [positionY,setPositionY] = useState(9)
-    const prevX = usePrevious(positionX)
-    const prevY = usePrevious(positionY)
+    const prevXY = usePrevious({x:positionX,y:positionY})
     const [Map,setMap]=useState(
         [
             [wall,wall,wall,wall,wall,wall,wall,wall,wall,wall,wall],
@@ -28,7 +27,7 @@ function NormalMode(){
             [wall,floor,floor,floor,floor,floor,floor,floor,floor,floor,wall],
             [wall,floor,floor,floor,floor,floor,floor,floor,floor,floor,wall],
             [wall,floor,floor,floor,floor,player1,floor,floor,floor,floor,wall],
-            [wall,wall,wall,wall,wall,FrontDoor,wall,wall,wall,wall,wall]
+            [wall,wall,wall,wall,wall,wall,wall,wall,wall,wall,wall]
         ]
     )
 
@@ -39,29 +38,15 @@ function NormalMode(){
     },[])
 
     useEffect(()=>{
-        if(prevX!==undefined) {
-            if(positionX>prevX) {
-                const temp = [...Map.slice(0, positionY), [...Map[positionY].slice(0, positionX-1), floor, player1, ...Map[positionY].slice(positionX + 1)], ...Map.slice(positionY + 1)]
-                setMap(temp)
-            }else {
-                const temp = [...Map.slice(0, positionY), [...Map[positionY].slice(0, positionX), player1,floor, ...Map[positionY].slice(positionX + 2)], ...Map.slice(positionY + 1)]
-                setMap(temp)
+        if(prevXY!==undefined) {
+            const madeMove=move(Map,positionX,positionY,prevXY)
+            if(madeMove!==undefined) {
+                setMap(madeMove.newroom)
+                setPositionX(madeMove.newposX)
+                setPositionY(madeMove.newposY)
             }
         }
-    },[positionX])
-
-    useEffect(()=>{
-        if(prevY!==undefined){
-            if(positionY>prevY){
-                const temp = [...Map.slice(0, positionY-1), [...Map[positionY-1].slice(0, positionX), floor, ...Map[positionY-1].slice(positionX + 1)], [...Map[positionY].slice(0, positionX), player1, ...Map[positionY].slice(positionX + 1)], ...Map.slice(positionY + 1)]
-                setMap(temp)
-            }else {
-                const temp = [...Map.slice(0, positionY), [...Map[positionY].slice(0, positionX), player1, ...Map[positionY].slice(positionX + 1)], [...Map[positionY+1].slice(0, positionX), floor, ...Map[positionY+1].slice(positionX + 1)], ...Map.slice(positionY + 2)]
-                setMap( temp)
-            }
-        }
-    },[positionY])
-
+    },[positionX,positionY])
 
 
 
