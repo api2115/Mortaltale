@@ -16,9 +16,9 @@ class door{
 }
 
 const FrontDoor = new door(2,"🚪",0)
-
+const ExitDoor = new door(3,"🚪",0)
 
 const wall = new object(1,"# ")
 const floor = new object(0,'\u00A0'+'\u00A0')
 
-export {FrontDoor,wall,floor}
+export {FrontDoor,wall,floor,ExitDoor}

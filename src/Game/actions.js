@@ -5,11 +5,11 @@ import {player1} from "./player";
 export function printMap(Map){
     return (
         <div>
-            {Map.length>0?
+            {Map!==undefined?
                 <div>
-                    {Map.map(row=>{
+                    {Map.map((row,index)=>{
                         return(
-                            <div key={Math.floor(Math.random()*9999)}>
+                            <div key={index} >
                                 {row[0].symbol+row[1].symbol+row[2].symbol+row[3].symbol+row[4].symbol+row[5].symbol+row[6].symbol+row[7].symbol+row[8].symbol+row[9].symbol+row[10].symbol}
                             </div>
                         )
@@ -21,25 +21,41 @@ export function printMap(Map){
     )
 }
 
-export function move(Map,positionX,positionY,prevXY){
-    if(Map[positionY][positionX].occupied===1){
-        return({newroom:Map,newposX:prevXY.x,newposY:prevXY.y})
-    }else if(Map[positionY][positionX].occupied===0){
-        if(positionX!==prevXY.x){
-            if(positionX>prevXY.x) {
-                const temp = [...Map.slice(0, positionY), [...Map[positionY].slice(0, positionX-1), floor, player1, ...Map[positionY].slice(positionX + 1)], ...Map.slice(positionY + 1)]
-                return({newroom:temp,newposX:positionX,newposY:positionY})
-            }else{
-                const temp = [...Map.slice(0, positionY), [...Map[positionY].slice(0, positionX), player1,floor, ...Map[positionY].slice(positionX + 2)], ...Map.slice(positionY + 1)]
-                return({newroom:temp,newposX:positionX,newposY:positionY})
+export function move(Map,positionX,positionY,prevXY,roomnumber,rooms){
+    if(Map!==undefined) {
+        if (Map[positionY][positionX].occupied === 1) {
+            return ({newroom: Map, newposX: prevXY.x, newposY: prevXY.y})
+        } else if (Map[positionY][positionX].occupied === 0) {
+            if (positionX !== prevXY.x) {
+                if (positionX > prevXY.x) {
+                    const temp = [...Map.slice(0, positionY), [...Map[positionY].slice(0, positionX - 1), floor, player1, ...Map[positionY].slice(positionX + 1)], ...Map.slice(positionY + 1)]
+                    return ({newroom: temp, newposX: positionX, newposY: positionY})
+                } else {
+                    const temp = [...Map.slice(0, positionY), [...Map[positionY].slice(0, positionX), player1, floor, ...Map[positionY].slice(positionX + 2)], ...Map.slice(positionY + 1)]
+                    return ({newroom: temp, newposX: positionX, newposY: positionY})
+                }
+            } else {
+                if (positionY > prevXY.y) {
+                    const temp = [...Map.slice(0, positionY - 1), [...Map[positionY - 1].slice(0, positionX), floor, ...Map[positionY - 1].slice(positionX + 1)], [...Map[positionY].slice(0, positionX), player1, ...Map[positionY].slice(positionX + 1)], ...Map.slice(positionY + 1)]
+                    return ({newroom: temp, newposX: positionX, newposY: positionY})
+                } else {
+                    const temp = [...Map.slice(0, positionY), [...Map[positionY].slice(0, positionX), player1, ...Map[positionY].slice(positionX + 1)], [...Map[positionY + 1].slice(0, positionX), floor, ...Map[positionY + 1].slice(positionX + 1)], ...Map.slice(positionY + 2)]
+                    return ({newroom: temp, newposX: positionX, newposY: positionY})
+                }
             }
-        }else {
-            if(positionY>prevXY.y){
-                const temp = [...Map.slice(0, positionY-1), [...Map[positionY-1].slice(0, positionX), floor, ...Map[positionY-1].slice(positionX + 1)], [...Map[positionY].slice(0, positionX), player1, ...Map[positionY].slice(positionX + 1)], ...Map.slice(positionY + 1)]
-                return({newroom:temp,newposX:positionX,newposY:positionY})
-            }else{
-                const temp = [...Map.slice(0, positionY), [...Map[positionY].slice(0, positionX), player1, ...Map[positionY].slice(positionX + 1)], [...Map[positionY+1].slice(0, positionX), floor, ...Map[positionY+1].slice(positionX + 1)], ...Map.slice(positionY + 2)]
-                return({newroom:temp,newposX:positionX,newposY:positionY})
+        } else if (Map[positionY][positionX].occupied === 2) {
+            if (Map[positionY][positionX].closed === 0) {
+                return ({newroom: Map, newposX: 5, newposY: 9, newrnumber: roomnumber + 1})
+            }
+        }else if(Map[positionY][positionX].occupied === 3){
+            for(let i =1; i<10; i++){
+                if(rooms[roomnumber-1][1][i]===player1){
+                    return({newroom: Map, newposX: i, newposY: 1, newrnumber: roomnumber - 1})
+                }else if(rooms[roomnumber-1][i][1]===player1){
+                    return({newroom: Map, newposX: 1, newposY: i, newrnumber: roomnumber - 1})
+                }else if(rooms[roomnumber-1][i][8]===player1){
+                    return({newroom: Map, newposX: 8, newposY: i, newrnumber: roomnumber - 1})
+                }
             }
         }
     }
