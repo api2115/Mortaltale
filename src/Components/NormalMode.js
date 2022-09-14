@@ -1,7 +1,9 @@
 import {useEffect, useRef, useState} from 'react'
 import {FrontDoor,wall,floor,ExitDoor} from "../Game/objects";
-import {printMap,move} from "../Game/actions"
+import {printMap, move, printStat,fight} from "../Game/actions"
 import {player1} from "../Game/player";
+import "../Style/NormalMode.scss"
+import {Rat} from "../Game/enemies";
 
 function usePrevious(value){
     const ref = useRef()
@@ -38,7 +40,7 @@ function NormalMode(){
         [wall,floor,floor,floor,floor,floor,floor,floor,floor,floor,wall],
         [FrontDoor,floor,floor,floor,floor,floor,floor,floor,floor,floor,wall],
         [wall,floor,floor,floor,floor,floor,floor,floor,floor,floor,wall],
-        [wall,floor,floor,floor,floor,floor,floor,floor,floor,floor,wall],
+        [wall,floor,floor,floor,floor,floor,floor,floor,Rat,floor,wall],
         [wall,floor,floor,floor,floor,floor,floor,floor,floor,floor,wall],
         [wall,floor,floor,floor,floor,player1,floor,floor,floor,floor,wall],
         [wall,wall,wall,wall,wall,wall,wall,wall,wall,wall,wall]
@@ -70,6 +72,10 @@ function NormalMode(){
                 setRooms([...rooms.slice(0, roomNumber), madeMove.newroom, ...rooms.slice(roomNumber + 1)])
                 setPositionX(madeMove.newposX)
                 setPositionY(madeMove.newposY)
+                const fightOutcome=fight(madeMove.newroom,madeMove.newposX,madeMove.newposY)
+                if(fightOutcome && fightOutcome.msg==="you won"){
+                    setRooms([...rooms.slice(0, roomNumber), fightOutcome.newroom, ...rooms.slice(roomNumber + 1)])
+                }
                 if(madeMove.newrnumber!==undefined){
                     setRoomNumber(madeMove.newrnumber)
                 }
@@ -99,10 +105,12 @@ function NormalMode(){
 
 
     return(
-        <div>
-            {rooms?printMap(rooms[roomNumber]):<div>321</div>}
+        <div className={"game"}>
             <div>
-                {positionX+" "+positionY}
+                {rooms?printMap(rooms[roomNumber]):<div>321</div>}
+            </div>
+            <div className={"stats"}>
+                {printStat(player1)}
             </div>
         </div>
     )

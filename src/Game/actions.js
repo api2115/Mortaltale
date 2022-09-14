@@ -1,6 +1,6 @@
 import {floor} from "./objects";
 import {player1} from "./player";
-
+import "../Style/NormalMode.scss"
 
 export function printMap(Map){
     return (
@@ -16,6 +16,20 @@ export function printMap(Map){
                     })}
                 </div>
                 :<div>Loading map</div>}
+        </div>
+
+    )
+}
+
+export function printStat(player){
+    return(
+        <div className={"stats"}>
+            <div>
+                {`HP:${player.stats.hp}/${player.stats.maxhp} Strength:${player.stats.strength} Defence:${player.stats.defence} Inteligence:${player.stats.inteligence} Speed${player.stats.speed}`}
+            </div>
+            <div>
+                {`LVL:${player.stats.lvl} EXP:${player.stats.exp}/${player.stats.maxexp}`}
+            </div>
         </div>
 
     )
@@ -57,6 +71,30 @@ export function move(Map,positionX,positionY,prevXY,roomnumber,rooms){
                     return({newroom: Map, newposX: 8, newposY: i, newrnumber: roomnumber - 1})
                 }
             }
+        }
+    }
+}
+
+function checkFight(Map,positionX,positionY){
+    if(Map[positionY-1][positionX].constructor.name==="enemy"){
+        return({posX:positionX,posY:positionY-1})
+    }else if(Map[positionY+1][positionX].constructor.name==="enemy"){
+        return({posX:positionX,posY:positionY+1})
+    }else if(Map[positionY][positionX-1].constructor.name==="enemy"){
+        return({posX:positionX-1,posY:positionY})
+    }else if(Map[positionY][positionX+1].constructor.name==="enemy"){
+        return({posX:positionX+1,posY:positionY})
+    }
+}
+
+export function fight(Map,positionX,positionY){
+    const fightChecker = checkFight(Map,positionX,positionY)
+    if(fightChecker){
+        if(Map[positionY][positionX].stats.strength>Map[fightChecker.posY][fightChecker.posX].stats.strength){
+            const temp = [...Map.slice(0,fightChecker.posY),[...Map[positionY].slice(0,fightChecker.posX),floor,...Map[positionY].slice(fightChecker.posX+1)],...Map.slice(fightChecker.posY+1)]
+            return({msg:"you won",newroom:temp})
+        }else {
+            return({msg:"you lost"})
         }
     }
 }
