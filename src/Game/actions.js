@@ -25,7 +25,7 @@ export function printStat(player){
     return(
         <div className={"stats"}>
             <div>
-                {`HP:${player.stats.hp}/${player.stats.maxhp} Strength:${player.stats.strength} Defence:${player.stats.defence} Inteligence:${player.stats.inteligence} Speed${player.stats.speed}`}
+                {`HP:${player.stats.hp}/${player.stats.maxhp} Strength:${player.stats.strength} Defence:${player.stats.defence} Inteligence:${player.stats.inteligence} Speed:${player.stats.speed}`}
             </div>
             <div>
                 {`LVL:${player.stats.lvl} EXP:${player.stats.exp}/${player.stats.maxexp}`}
@@ -75,7 +75,7 @@ export function move(Map,positionX,positionY,prevXY,roomnumber,rooms){
     }
 }
 
-function checkFight(Map,positionX,positionY){
+export function checkFight(Map,positionX,positionY){
     if(Map[positionY-1][positionX].constructor.name==="enemy"){
         return({posX:positionX,posY:positionY-1})
     }else if(Map[positionY+1][positionX].constructor.name==="enemy"){
@@ -87,14 +87,12 @@ function checkFight(Map,positionX,positionY){
     }
 }
 
-export function fight(Map,positionX,positionY){
-    const fightChecker = checkFight(Map,positionX,positionY)
-    if(fightChecker){
-        if(Map[positionY][positionX].stats.strength>Map[fightChecker.posY][fightChecker.posX].stats.strength){
-            const temp = [...Map.slice(0,fightChecker.posY),[...Map[positionY].slice(0,fightChecker.posX),floor,...Map[positionY].slice(fightChecker.posX+1)],...Map.slice(fightChecker.posY+1)]
-            return({msg:"you won",newroom:temp})
-        }else {
-            return({msg:"you lost"})
+export function findPlayer(Map){
+    for(let i=1; i<10; i++){
+        for(let e=1; e<10; e++){
+            if(Map[i][e]===player1){
+                return({x:e,y:i})
+            }
         }
     }
 }

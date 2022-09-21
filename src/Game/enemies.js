@@ -6,7 +6,7 @@ class enemy{
     }
 }
 
-const Rat = new enemy("R",{hp:10,maxhp:10,strength:2,speed:10})
+const Rat = new enemy("R ",{hp:10,maxhp:10,strength:2,speed:10})
 
 
 
